@@ -31,7 +31,7 @@ else
                         <a href="@Url.Action("Update","Pizza", new {id = pizza.Id})">
                             <button type="button" class="btn btn-warning btn-sm mb-3">MODIFICA</button>
                         </a>
-                        <form asp-controller="Post" asp-action="Delete" asp-route-id="@pizza.Id" method="pizza">
+                        <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@pizza.Id" method="post">
                             <button type="submit" class="btn btn-danger btn-sm">CANCELLA</button>
                         </form>
                     </td>
