@@ -1,0 +1,42 @@
+﻿@model List<Pizza>
+
+@if (Model.Count() == 0)
+{
+    <h2>Purtoppo non hai nessuna pizza disponibile!!!</h2>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">NOME</th>
+                <th scope="col">DESCRIZIONE</th>
+                <th scope="col">IMMAGINE</th>
+                <th scope="col">PREZZO</th>
+                <th scope="col-3"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Pizza pizza in Model)
+            {
+                <tr>
+                    <th scope="row">@pizza.Name</th>
+                    <td>@pizza.Description</td>
+                    <td><img alt="@pizza.Name" src="@pizza.Image" style="width:300px; height:250px"></td>
+                    <td>@pizza.Price</td>
+                    <td>
+                        <a href="@Url.Action("Detail","Pizza", new {id = pizza.Id})">
+                            <button type="button" class="btn btn-primary btn-sm mb-3">VISUALIZZA</button>
+                        </a> <br>
+                        <a href="@Url.Action("Update","Pizza", new {id = pizza.Id})">
+                            <button type="button" class="btn btn-warning btn-sm mb-3">MODIFICA</button>
+                        </a>
+                        <form asp-controller="Post" asp-action="Delete" asp-route-id="@pizza.Id" method="pizza">
+                            <button type="submit" class="btn btn-danger btn-sm">CANCELLA</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
