@@ -58,8 +58,27 @@ namespace la_mia_pizzeria_static.Controllers
             //dobbiamo passare anche il post alla view
             return View(post);
         }
+
+        //primo modo passando solo il modello
+        //[HttpPost]
+        //public IActionResult Update(Pizza pizza)
+        //{
+
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View();
+        //    }
+
+        //    db.Pizzas.Update(pizza);
+        //    db.SaveChanges();
+
+        //    return RedirectToAction("Index");
+        //}
+
+        //secondo modo in cui passiamo sia l'id che il modello e modifichiamo dato per dato
         [HttpPost]
-        public IActionResult Update(Pizza post)
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(int id, Pizza formData)
         {
 
             if (!ModelState.IsValid)
@@ -68,40 +87,22 @@ namespace la_mia_pizzeria_static.Controllers
                 return View();
             }
 
-            db.Pizzas.Update(post);
+            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
+
+            if (pizza == null)
+            {
+                return NotFound();
+            }
+
+            pizza.Name = formData.Name;
+            pizza.Description = formData.Description;
+            pizza.Image = formData.Image;
+            pizza.Price = formData.Price;
+
             db.SaveChanges();
 
             return RedirectToAction("Index");
         }
-
-        //altro modo
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Update(int id, Pizza formData)
-        //{
-
-        //    if (!ModelState.IsValid)
-        //    {
-        //        //return View(post);
-        //        return View();
-        //    }
-
-        //    Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
-
-        //    if (pizza == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    pizza.Name = formData.Name;
-        //    pizza.Description = formData.Description;
-        //    pizza.Image = formData.Image;
-        //    pizza.Price = formData.Price;
-
-        //    db.SaveChanges();
-
-        //    return RedirectToAction("Index");
-        //}
 
     }
 }
