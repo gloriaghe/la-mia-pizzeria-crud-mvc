@@ -66,7 +66,7 @@ namespace la_mia_pizzeria_static.Controllers
 
         //    if (!ModelState.IsValid)
         //    {
-        //        return View();
+        //        return View(pizza);
         //    }
 
         //    db.Pizzas.Update(pizza);
@@ -82,7 +82,7 @@ namespace la_mia_pizzeria_static.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                return View(formData);
             }
 
             Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
