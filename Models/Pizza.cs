@@ -27,6 +27,12 @@ namespace la_mia_pizzeria_static.Models
         [Range(0, 200, ErrorMessage = "Il prezzo deve essere compreso fra 0 e 200")]
         public double Price { get; set; }
 
+        //relazione 1 a molti con Category (chiave esterna)
+        public int CategoryId { get; set; }
+
+        //relazione 1 a molti con Category (istanza del record nelle query)
+        public Category? Category { get; set; }
+
         public Pizza(string name, string description, string image, double price)
         {
             Name = name;

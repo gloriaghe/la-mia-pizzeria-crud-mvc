@@ -1,6 +1,8 @@
 ﻿using la_mia_pizzeria_static.Data;
 using la_mia_pizzeria_static.Models;
+using la_mia_pizzeria_static.Models.Form;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace la_mia_pizzeria_static.Controllers
@@ -13,15 +15,16 @@ namespace la_mia_pizzeria_static.Controllers
         {
             db = new PizzaDbContext();
         }
+
         public IActionResult Index()
         {
-            List<Pizza> listaPizze = db.Pizzas.ToList();
+            List<Pizza> listaPizze = db.Pizzas.Include(pizza => pizza.Category).ToList();
             return View(listaPizze);
         }
 
         public IActionResult Detail(int id)
         {
-            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
+            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).Include(pizza => pizza.Category).FirstOrDefault();
             if (pizza == null)
                 return View("Errore", "Pizza non trovata");
 
@@ -31,32 +34,42 @@ namespace la_mia_pizzeria_static.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            PizzaForm formData = new PizzaForm();
+            formData.Pizza = new Pizza();
+            formData.Categories = db.Categories.ToList();
+
+            return View(formData);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Pizza pizza)
+        public IActionResult Create(PizzaForm formData)
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                formData.Categories = db.Categories.ToList();
+                return View(formData);
             }
 
-            db.Pizzas.Add(pizza);
+            db.Pizzas.Add(formData.Pizza);
             db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Detail", new { id = formData.Pizza.Id });
         }
+
         public IActionResult Update(int id)
         {
-            Pizza post = db.Pizzas.Where(post => post.Id == id).FirstOrDefault();
+            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
 
-            if (post == null)
+            if (pizza == null)
                 return NotFound();
 
+            PizzaForm formData = new PizzaForm();
+            formData.Pizza = pizza;
+            formData.Categories = db.Categories.ToList();
+
             //dobbiamo passare anche il post alla view
-            return View(post);
+            return View(formData);
         }
 
         //primo modo passando solo il modello
@@ -78,29 +91,37 @@ namespace la_mia_pizzeria_static.Controllers
         //secondo modo in cui passiamo sia l'id che il modello e modifichiamo dato per dato
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(int id, Pizza formData)
+        public IActionResult Update(int id, PizzaForm formData)
         {
             if (!ModelState.IsValid)
             {
+                formData.Categories = db.Categories.ToList();
+
                 return View(formData);
             }
 
-            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
-        
+            //Update esplicito
+            //Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
 
-            if (pizza == null)
-            {
-                return NotFound();
-            }
 
-            pizza.Name = formData.Name;
-            pizza.Description = formData.Description;
-            pizza.Image = formData.Image;
-            pizza.Price = formData.Price;
+            //if (pizza == null)
+            //{
+            //    return NotFound();
+            //}
 
+            //pizza.Name = formData.Pizza.Name;
+            //pizza.Description = formData.Pizza.Description;
+            //pizza.Image = formData.Pizza.Image;
+            //pizza.Price = formData.Pizza.Price;
+
+            //Update implicito
+            formData.Pizza.Id = id;
+            db.Pizzas.Update(formData.Pizza);
+
+            //salviamo
             db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Detail", new { id = formData.Pizza.Id });
         }
 
         [HttpPost]

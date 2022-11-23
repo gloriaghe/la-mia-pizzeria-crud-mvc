@@ -1,16 +1,16 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
@@ -19,20 +19,22 @@ body {
     height: 100vh;
     color: white;
 }
+
 header {
     background-color: #0086a7;
 }
-img{
+
+img {
     object-fit: cover;
 }
-#containerPizzeria{
+
+#containerPizzeria {
     height: 100%;
 }
 
 /*tabella index*/
 table tr {
-   color: white;
-
+    color: white;
 }
 
 #detailPizza {
@@ -40,15 +42,22 @@ table tr {
     margin-top: 40px;
 }
 
-#detailPizza img{
-    margin: 20px;
-    width:80%;
-    border-radius: 30px;
-}
+    #detailPizza img {
+        margin: 20px;
+        width: 400px;
+        height: 400px;
+        border-radius: 30px;
+    }
+
 table .btn {
     color: white;
     font-weight: bolder;
+    width: 100px;
 }
+table .btn:hover {
+    color: white;
+}
+
 footer a, footer div {
     color: white;
 }
