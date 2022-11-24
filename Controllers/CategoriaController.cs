@@ -17,7 +17,7 @@ namespace la_mia_pizzeria_static.Controllers
         }
         public IActionResult Index()
         {
-            List<Category> listCategories = db.Categories.ToList();
+            List<Category> listCategories = db.Categories.Include("Pizzas").ToList();
             return View(listCategories);
         }
         public IActionResult Create()

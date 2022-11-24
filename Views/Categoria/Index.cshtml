@@ -11,6 +11,8 @@ else
             <tr>
                 <th scope="col">NOME CATEGORIA</th>
                 <th scope="col">DESCRIZIONE</th>
+                <th scope="col">PIZZE COLLEGATE</th>
+
                 <th></th>
             </tr>
         </thead>
@@ -20,7 +22,15 @@ else
                 <tr>
                     <th scope="row">@categoria.Name</th>
                     <td>@categoria.Description</td>
-                    
+                    @if (categoria.Pizzas.Count == 0)
+                    {
+                        <td>Nessuna pizza</td>
+                    }
+                    else
+                    {
+                        <td>@categoria.Pizzas.Count</td>
+                    }
+
                     <td>
                         <a href="@Url.Action("Detail","Categoria", new {id = categoria.Id})">
                             <button type="button" class="btn btn-primary btn-sm mb-3">VISUALIZZA</button>
@@ -28,9 +38,12 @@ else
                         <a href="@Url.Action("Update","Categoria", new {id = categoria.Id})">
                             <button type="button" class="btn btn-warning btn-sm mb-3">MODIFICA</button>
                         </a>
-                        <form asp-controller="Categoria" asp-action="Delete" asp-route-id="@categoria.Id" method="post">
-                            <button type="submit" class="btn btn-danger btn-sm">CANCELLA</button>
-                        </form>
+                        @if (categoria.Pizzas.Count == 0)
+                        {
+                            <form asp-controller="Categoria" asp-action="Delete" asp-route-id="@categoria.Id" method="post">
+                                <button type="submit" class="btn btn-danger btn-sm">CANCELLA</button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }
