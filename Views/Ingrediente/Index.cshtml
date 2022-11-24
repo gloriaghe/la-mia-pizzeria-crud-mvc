@@ -6,7 +6,7 @@
 }
 else
 {
-    <table class="table">
+    <table class="table mt-2">
         <thead>
             <tr>
                 <th scope="col">NOME INGREDIENTE</th>
@@ -19,7 +19,7 @@ else
             @foreach (Ingredient ingredient in Model)
             {
                 <tr>
-                    <th scope="row">@ingredient.Name</th>
+                    <td id="titleTable" class="text-uppercase" scope="row">@ingredient.Name</td>
                     @if (ingredient.Pizzas.Count == 0)
                     {
                         <td>Nessuna pizza</td>

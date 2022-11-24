@@ -36,6 +36,9 @@ img {
 table tr {
     color: white;
 }
+#titleTable {
+    color: #abeeff;
+}
 
 #detailPizza {
     color: #219ebc;

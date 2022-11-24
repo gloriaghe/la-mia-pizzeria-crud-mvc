@@ -6,7 +6,7 @@
 }
 else
 {
-    <table class="table">
+    <table class="table mt-2">
         <thead>
             <tr>
                 <th scope="col">NOME</th>
@@ -15,7 +15,6 @@ else
                 <th scope="col">PREZZO</th>
                 <th scope="col">CATEGORIA</th>
                 <th scope="col">INGREDIENTI</th>
-
                 <th></th>
             </tr>
         </thead>
@@ -23,7 +22,7 @@ else
             @foreach (Pizza pizza in Model)
             {
                 <tr>
-                    <th scope="row">@pizza.Name</th>
+                    <td id="titleTable" class ="text-uppercase" scope="row">@pizza.Name</td>
                     <td>@pizza.Description</td>
                     <td><img alt="@pizza.Name" src="@pizza.Image" style="width:300px; height:250px"></td>
                     <td>@pizza.Price</td>

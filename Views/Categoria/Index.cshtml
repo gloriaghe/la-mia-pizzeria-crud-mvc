@@ -20,7 +20,7 @@ else
             @foreach (Category categoria in Model)
             {
                 <tr>
-                    <th scope="row">@categoria.Name</th>
+                    <td id ="titleTable" class="text-uppercase" scope="row">@categoria.Name</td>
                     <td>@categoria.Description</td>
                     @if (categoria.Pizzas.Count == 0)
                     {
