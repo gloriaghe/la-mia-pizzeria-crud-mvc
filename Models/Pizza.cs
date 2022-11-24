@@ -33,6 +33,10 @@ namespace la_mia_pizzeria_static.Models
         //relazione 1 a molti con Category (istanza del record nelle query)
         public Category? Category { get; set; }
 
+        //relazione molti a molti con Ingredienti 
+        public List<Ingredient>? Ingredients { get; set; }
+
+
         public Pizza(string name, string description, string image, double price)
         {
             Name = name;

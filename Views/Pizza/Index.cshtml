@@ -14,6 +14,8 @@ else
                 <th scope="col">IMMAGINE</th>
                 <th scope="col">PREZZO</th>
                 <th scope="col">CATEGORIA</th>
+                <th scope="col">INGREDIENTI</th>
+
                 <th></th>
             </tr>
         </thead>
@@ -26,6 +28,12 @@ else
                     <td><img alt="@pizza.Name" src="@pizza.Image" style="width:300px; height:250px"></td>
                     <td>@pizza.Price</td>
                     <td>@pizza.Category.Name</td>
+                    <td>
+                    @foreach(Ingredient ing in pizza.Ingredients)
+                    {
+                            <span>@ing.Name</span><br>   
+                    }
+                    </td>
                     <td>
                         <a href="@Url.Action("Detail","Pizza", new {id = pizza.Id})">
                             <button type="button" class="btn btn-primary btn-sm mb-3">VISUALIZZA</button>

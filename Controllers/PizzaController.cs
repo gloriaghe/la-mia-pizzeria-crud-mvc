@@ -1,7 +1,9 @@
-﻿using la_mia_pizzeria_static.Data;
+﻿using Azure;
+using la_mia_pizzeria_static.Data;
 using la_mia_pizzeria_static.Models;
 using la_mia_pizzeria_static.Models.Form;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
@@ -18,13 +20,13 @@ namespace la_mia_pizzeria_static.Controllers
 
         public IActionResult Index()
         {
-            List<Pizza> listaPizze = db.Pizzas.Include(pizza => pizza.Category).ToList();
+            List<Pizza> listaPizze = db.Pizzas.Include(pizza => pizza.Category).Include("Ingredients").ToList();
             return View(listaPizze);
         }
 
         public IActionResult Detail(int id)
         {
-            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).Include(pizza => pizza.Category).FirstOrDefault();
+            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).Include(pizza => pizza.Category).Include("Ingredients").FirstOrDefault();
             if (pizza == null)
                 return View("Errore", "Pizza non trovata");
 
@@ -37,6 +39,14 @@ namespace la_mia_pizzeria_static.Controllers
             PizzaForm formData = new PizzaForm();
             formData.Pizza = new Pizza();
             formData.Categories = db.Categories.ToList();
+            formData.Ingredients = new List<SelectListItem>();
+
+            List<Ingredient> ingredientList = db.Ingredients.ToList();
+
+            foreach (Ingredient ing in ingredientList)
+            {
+                formData.Ingredients.Add(new SelectListItem(ing.Name, ing.Id.ToString()));
+            }
 
             return View(formData);
         }
@@ -48,7 +58,25 @@ namespace la_mia_pizzeria_static.Controllers
             if (!ModelState.IsValid)
             {
                 formData.Categories = db.Categories.ToList();
+                formData.Ingredients = new List<SelectListItem>();
+
+                List<Ingredient> tagList = db.Ingredients.ToList();
+
+                foreach (Ingredient ing in tagList)
+                {
+                    formData.Ingredients.Add(new SelectListItem(ing.Name, ing.Id.ToString()));
+                }
+
                 return View(formData);
+            }
+
+            //associazione dell'ingrediente selezionato dall'user al model
+            formData.Pizza.Ingredients = new List<Ingredient>();
+
+            foreach (int ingID in formData.SelectedIngredients)
+            {
+                Ingredient ingredient = db.Ingredients.Where(i => i.Id == ingID).FirstOrDefault();
+                formData.Pizza.Ingredients.Add(ingredient);
             }
 
             db.Pizzas.Add(formData.Pizza);
