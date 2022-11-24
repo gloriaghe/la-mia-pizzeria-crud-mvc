@@ -2,6 +2,7 @@
 using la_mia_pizzeria_static.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace la_mia_pizzeria_static.Controllers
@@ -70,18 +71,19 @@ namespace la_mia_pizzeria_static.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            Category post = db.Categories.Where(c => c.Id == id).FirstOrDefault();
+            Category category = db.Categories.Where(c => c.Id == id).Include("Pizzas").FirstOrDefault();
 
-            if (post == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            db.Categories.Remove(post);
-            db.SaveChanges();
-
-
-            return RedirectToAction("Index");
+            if (category.Pizzas.Count > 0)
+                return View("Errore", "La categoria non può essere eliminata in quanto ha delle pizze già assegnate ad essa");
+          
+                db.Categories.Remove(category);
+                db.SaveChanges();
+                return RedirectToAction("Index");
         }
     }
 }
