@@ -73,10 +73,14 @@ namespace la_mia_pizzeria_static.Controllers
             //associazione dell'ingrediente selezionato dall'user al model
             formData.Pizza.Ingredients = new List<Ingredient>();
 
-            foreach (int ingID in formData.SelectedIngredients)
+            if (formData.SelectedIngredients != null)
             {
-                Ingredient ingredient = db.Ingredients.Where(i => i.Id == ingID).FirstOrDefault();
-                formData.Pizza.Ingredients.Add(ingredient);
+
+                foreach (int ingID in formData.SelectedIngredients)
+                {
+                    Ingredient ingredient = db.Ingredients.Where(i => i.Id == ingID).FirstOrDefault();
+                    formData.Pizza.Ingredients.Add(ingredient);
+                }
             }
 
             db.Pizzas.Add(formData.Pizza);
@@ -87,7 +91,7 @@ namespace la_mia_pizzeria_static.Controllers
 
         public IActionResult Update(int id)
         {
-            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
+            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).Include("Ingredients").FirstOrDefault();
 
             if (pizza == null)
                 return NotFound();
@@ -95,7 +99,18 @@ namespace la_mia_pizzeria_static.Controllers
             PizzaForm formData = new PizzaForm();
             formData.Pizza = pizza;
             formData.Categories = db.Categories.ToList();
+            formData.Ingredients = new List<SelectListItem>();
 
+            List<Ingredient> ingredientsList = db.Ingredients.ToList();
+
+            foreach (Ingredient ing in ingredientsList)
+            {
+                formData.Ingredients.Add(new SelectListItem(
+                    ing.Name,
+                    ing.Id.ToString(),
+                    pizza.Ingredients.Any(i => i.Id == ing.Id)
+                   ));
+            }
             //dobbiamo passare anche il post alla view
             return View(formData);
         }
@@ -123,33 +138,56 @@ namespace la_mia_pizzeria_static.Controllers
         {
             if (!ModelState.IsValid)
             {
-                formData.Categories = db.Categories.ToList();
+                formData.Pizza.Id = id;
 
+                formData.Categories = db.Categories.ToList();
+                formData.Ingredients = new List<SelectListItem>();
+
+                List<Ingredient> ingredientsList = db.Ingredients.ToList();
+
+                foreach (Ingredient ing in ingredientsList)
+                {
+                    formData.Ingredients.Add(new SelectListItem(ing.Name, ing.Id.ToString()));
+                }
                 return View(formData);
             }
 
             //Update esplicito
-            //Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
+            Pizza pizza = db.Pizzas.Where(pizza => pizza.Id == id).Include("Ingredients").FirstOrDefault();
 
 
-            //if (pizza == null)
-            //{
-            //    return NotFound();
-            //}
+            if (pizza == null)
+            {
+                return NotFound();
+            }
 
-            //pizza.Name = formData.Pizza.Name;
-            //pizza.Description = formData.Pizza.Description;
-            //pizza.Image = formData.Pizza.Image;
-            //pizza.Price = formData.Pizza.Price;
+            pizza.Name = formData.Pizza.Name;
+            pizza.Description = formData.Pizza.Description;
+            pizza.Image = formData.Pizza.Image;
+            pizza.Price = formData.Pizza.Price;
+            pizza.CategoryId = formData.Pizza.CategoryId;
 
-            //Update implicito
-            formData.Pizza.Id = id;
-            db.Pizzas.Update(formData.Pizza);
+            pizza.Ingredients.Clear();
+
+            if (formData.SelectedIngredients == null)
+            {
+                formData.SelectedIngredients = new List<int>();
+            }
+
+            foreach (int ingId in formData.SelectedIngredients)
+            {
+                Ingredient ing = db.Ingredients.Where(i => i.Id == ingId).FirstOrDefault();
+                pizza.Ingredients.Add(ing);
+            }
+
+            ////Update implicito
+            //formData.Pizza.Id = id;
+            //db.Pizzas.Update(formData.Pizza);
 
             //salviamo
             db.SaveChanges();
 
-            return RedirectToAction("Detail", new { id = formData.Pizza.Id });
+            return RedirectToAction("Detail", new { id = pizza.Id });
         }
 
         [HttpPost]
