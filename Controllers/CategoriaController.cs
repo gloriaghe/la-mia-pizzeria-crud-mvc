@@ -29,6 +29,12 @@ namespace la_mia_pizzeria_static.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category categoria)
         {
+            if (db.Categories.Where(c => c.Name == categoria.Name).Count() > 0)
+            {
+                return View("Errore", "La categoria esiste già");
+
+            }
+
             if (!ModelState.IsValid)
             {
 

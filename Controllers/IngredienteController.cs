@@ -29,6 +29,12 @@ namespace la_mia_pizzeria_static.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Ingredient ingrediente)
         {
+            if (db.Ingredients.Where(i => i.Name == ingrediente.Name).Count() > 0)
+            {
+                return View("Errore", "L'ingrediente esiste già");
+
+            }
+
             if (!ModelState.IsValid)
             {
 
