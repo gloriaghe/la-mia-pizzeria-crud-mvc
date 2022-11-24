@@ -1,0 +1,44 @@
+﻿@model List<Ingredient>
+
+@if (Model.Count() == 0)
+{
+    <h2>Purtoppo non hai ingredienti inseriti!!!</h2>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">NOME INGREDIENTE</th>
+                <th scope="col">PIZZE COLLEGATE</th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Ingredient ingredient in Model)
+            {
+                <tr>
+                    <th scope="row">@ingredient.Name</th>
+                    @if (ingredient.Pizzas.Count == 0)
+                    {
+                        <td>Nessuna pizza</td>
+                    }
+                    else
+                    {
+                        <td>@ingredient.Pizzas.Count</td>
+                    }
+
+                    <td class="d-flex">
+                        <a href="@Url.Action("Update","Ingrediente", new {id = ingredient.Id})">
+                            <button type="button" class="btn btn-warning btn-sm mx-3">MODIFICA</button>
+                        </a>
+                            <form asp-controller="Ingrediente" asp-action="Delete" asp-route-id="@ingredient.Id" method="post">
+                            <button type="submit" class="btn btn-danger btn-sm mx-3">CANCELLA</button>
+                            </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
