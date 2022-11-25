@@ -1,5 +1,6 @@
 ﻿using la_mia_pizzeria_static.Data;
 using la_mia_pizzeria_static.Models;
+using la_mia_pizzeria_static.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,15 +9,17 @@ namespace la_mia_pizzeria_static.Controllers
     public class IngredienteController : Controller
     {
         PizzaDbContext db;
+        DbPizzeriaRepository pizzeria;
 
         public IngredienteController() : base()
         {
             db = new PizzaDbContext();
+            pizzeria = new DbPizzeriaRepository();
         }
 
         public IActionResult Index()
         {
-            List<Ingredient> listIngredient = db.Ingredients.Include("Pizzas").ToList();
+            List<Ingredient> listIngredient = pizzeria.AllIng();
             return View(listIngredient);
         }
 
@@ -27,9 +30,9 @@ namespace la_mia_pizzeria_static.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Ingredient ingrediente)
+        public IActionResult Create(Ingredient ingredient)
         {
-            if (db.Ingredients.Where(i => i.Name == ingrediente.Name).Count() > 0)
+            if (pizzeria.CountIng(ingredient) > 0)
             {
                 return View("Errore", "L'ingrediente esiste già");
 
@@ -40,35 +43,34 @@ namespace la_mia_pizzeria_static.Controllers
 
                 return View();
             }
-            db.Ingredients.Add(ingrediente);
-            db.SaveChanges();
+            pizzeria.CreateIng(ingredient);
 
             return RedirectToAction("Index");
         }
 
         public IActionResult Update(int id)
         {
-            Ingredient ingrediente = db.Ingredients.Where(i => i.Id == id).FirstOrDefault();
+            Ingredient ingredient = pizzeria.GetByIdIng(id);
 
-            if (ingrediente == null)
+            if (ingredient == null)
                 return NotFound();
 
-            return View(ingrediente);
+            return View(ingredient);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public IActionResult Update(Ingredient ingrediente)
+        public IActionResult Update(Ingredient ingredient)
         {
 
             if (!ModelState.IsValid)
             {
-                return View(ingrediente);
+                return View(ingredient);
             }
 
-            db.Ingredients.Update(ingrediente);
-            db.SaveChanges();
+           pizzeria.UpdateIng(ingredient);
+           
 
             return RedirectToAction("Index");
         }
@@ -77,7 +79,7 @@ namespace la_mia_pizzeria_static.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            Ingredient ingredient = db.Ingredients.Where(i => i.Id == id).Include("Pizzas").FirstOrDefault();
+            Ingredient ingredient = pizzeria.GetByIdIng(id);
 
             if (ingredient == null)
             {
@@ -86,9 +88,8 @@ namespace la_mia_pizzeria_static.Controllers
 
             //if (ingredient.Pizzas.Count > 0)
             //    return View("Errore", "L'ingrediente non può essere eliminata in quanto ha delle pizze già assegnate ad essa");
+            pizzeria.DeleteIng(ingredient);
 
-            db.Ingredients.Remove(ingredient);
-            db.SaveChanges();
             return RedirectToAction("Index");
         }
     }

@@ -1,5 +1,6 @@
 ﻿using la_mia_pizzeria_static.Data;
 using la_mia_pizzeria_static.Models;
+using la_mia_pizzeria_static.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -10,14 +11,18 @@ namespace la_mia_pizzeria_static.Controllers
     public class CategoriaController : Controller
     {
         PizzaDbContext db;
+        DbPizzeriaRepository pizzeria;
 
         public CategoriaController() : base()
         {
             db = new PizzaDbContext();
+            pizzeria = new DbPizzeriaRepository();
+
         }
+
         public IActionResult Index()
         {
-            List<Category> listCategories = db.Categories.Include("Pizzas").ToList();
+            List<Category> listCategories = pizzeria.AllCat();
             return View(listCategories);
         }
         public IActionResult Create()
@@ -29,7 +34,7 @@ namespace la_mia_pizzeria_static.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category categoria)
         {
-            if (db.Categories.Where(c => c.Name == categoria.Name).Count() > 0)
+            if (pizzeria.CountCat(categoria) > 0)
             {
                 return View("Errore", "La categoria esiste già");
 
@@ -40,15 +45,14 @@ namespace la_mia_pizzeria_static.Controllers
 
                 return View();
             }
-            db.Categories.Add(categoria);
-            db.SaveChanges();
+            pizzeria.CreateCat(categoria);
 
             return RedirectToAction("Index");
         }
 
         public IActionResult Update(int id)
         {
-            Category categoria = db.Categories.Where(c => c.Id == id).FirstOrDefault();
+            Category categoria = pizzeria.GetByIdCat(id);
 
             if (categoria == null)
                 return NotFound();
@@ -67,8 +71,7 @@ namespace la_mia_pizzeria_static.Controllers
                 return View(categoria);
             }
 
-            db.Categories.Update(categoria);
-            db.SaveChanges();
+            pizzeria.UpdateCat(categoria);
 
             return RedirectToAction("Index");
         }
@@ -77,7 +80,7 @@ namespace la_mia_pizzeria_static.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            Category category = db.Categories.Where(c => c.Id == id).Include("Pizzas").FirstOrDefault();
+            Category category = pizzeria.GetByIdCat(id);
 
             if (category == null)
             {
@@ -87,8 +90,7 @@ namespace la_mia_pizzeria_static.Controllers
             if (category.Pizzas.Count > 0)
                 return View("Errore", "La categoria non può essere eliminata in quanto ha delle pizze già assegnate ad essa");
           
-                db.Categories.Remove(category);
-                db.SaveChanges();
+                pizzeria.Deletecat(category);
                 return RedirectToAction("Index");
         }
     }
