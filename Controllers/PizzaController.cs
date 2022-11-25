@@ -14,8 +14,8 @@ namespace la_mia_pizzeria_static.Controllers
     {
         //PizzaDbContext db;
         DbPizzeriaRepository pizzeria;
-        
-        
+
+
         public PizzaController() : base()
         {
             //db = new PizzaDbContext();
@@ -165,12 +165,12 @@ namespace la_mia_pizzeria_static.Controllers
                 return NotFound();
             }
 
-           
+
             ////Update implicito
             //formData.Pizza.Id = id;
             //db.Pizzas.Update(formData.Pizza);
 
-            
+
             pizzeria.Update(pizza, formData.Pizza, formData.SelectedIngredients);
             return RedirectToAction("Detail", new { id = pizza.Id });
         }

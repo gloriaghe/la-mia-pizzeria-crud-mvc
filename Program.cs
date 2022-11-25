@@ -1,4 +1,9 @@
+using la_mia_pizzeria_static.Models.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
+
+//senza server usa le liste pizze
+builder.Services.AddScoped<IPizzeriaRepository, InMemoryPizzaRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
