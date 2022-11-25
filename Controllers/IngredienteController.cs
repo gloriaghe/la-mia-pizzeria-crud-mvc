@@ -8,13 +8,14 @@ namespace la_mia_pizzeria_static.Controllers
 {
     public class IngredienteController : Controller
     {
-        PizzaDbContext db;
-        DbPizzeriaRepository pizzeria;
-
-        public IngredienteController() : base()
+        //PizzaDbContext db;
+        //DbPizzeriaRepository pizzeria;
+        IPizzeriaRepository pizzeria;
+        public IngredienteController(IPizzeriaRepository _pizzeria) : base()
         {
-            db = new PizzaDbContext();
-            pizzeria = new DbPizzeriaRepository();
+            //db = new PizzaDbContext();
+            //pizzeria = new DbPizzeriaRepository();
+            pizzeria= _pizzeria;
         }
 
         public IActionResult Index()

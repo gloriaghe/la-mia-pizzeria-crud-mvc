@@ -3,9 +3,42 @@
     public interface IPizzeriaRepository
     {
         List<Pizza> All();
-        void Create(Pizza pizza, List<int> selectedIngredients);
-        void Delete(Pizza pizza);
-        Pizza getID(int id);
-        void Update(Pizza pizza, Pizza formData, List<int>? SelectedIngredients);
+       
+         List<Category> AllCat();
+        
+         List<Ingredient> AllIng();
+        
+         Pizza getID(int id);
+        
+         Category GetByIdCat(int id);
+        
+         Ingredient GetByIdIng(int id);
+        
+         void Create(Pizza pizza, List<int> selectedIngredients);
+        
+         void CreateCat(Category category);
+        
+
+         void CreateIng(Ingredient ingredient);
+        
+         int CountCat(Category category);
+        
+         int CountIng(Ingredient ingredient);
+        
+         void Update(Pizza pizza, Pizza formData, List<int>? SelectedIngredients, Category category);
+       
+         void Delete(Pizza pizza);
+       
+         void UpdateCat(Category category);
+       
+         void Deletecat(Category category);
+      
+
+         void UpdateIng(Ingredient ingredient);
+        
+         void DeleteIng(Ingredient ingredient);
+        
     }
+
+
 }

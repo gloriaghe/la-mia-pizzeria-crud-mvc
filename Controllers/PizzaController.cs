@@ -13,13 +13,16 @@ namespace la_mia_pizzeria_static.Controllers
     public class PizzaController : Controller
     {
         //PizzaDbContext db;
-        DbPizzeriaRepository pizzeria;
+        //DbPizzeriaRepository pizzeria;
+
+        IPizzeriaRepository pizzeria;
 
 
-        public PizzaController() : base()
+        public PizzaController(IPizzeriaRepository _pizzeria) : base()
         {
             //db = new PizzaDbContext();
-            pizzeria = new DbPizzeriaRepository();
+            //pizzeria = new DbPizzeriaRepository();
+            pizzeria = _pizzeria;
         }
 
         public IActionResult Index()
@@ -159,7 +162,6 @@ namespace la_mia_pizzeria_static.Controllers
             //Update esplicito
             Pizza pizza = pizzeria.getID(id);
 
-
             if (pizza == null)
             {
                 return NotFound();
@@ -171,7 +173,7 @@ namespace la_mia_pizzeria_static.Controllers
             //db.Pizzas.Update(formData.Pizza);
 
 
-            pizzeria.Update(pizza, formData.Pizza, formData.SelectedIngredients);
+            pizzeria.Update(pizza, formData.Pizza, formData.SelectedIngredients, formData.Pizza.Category);
             return RedirectToAction("Detail", new { id = pizza.Id });
         }
 

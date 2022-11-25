@@ -2,8 +2,6 @@ using la_mia_pizzeria_static.Models.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//senza server usa le liste pizze
-builder.Services.AddScoped<IPizzeriaRepository, InMemoryPizzaRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -14,8 +12,12 @@ builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 
 
+//senza server usa le liste pizze
+//builder.Services.AddScoped<IPizzeriaRepository, InMemoryPizzaRepository>();
+builder.Services.AddScoped<IPizzeriaRepository, DbPizzeriaRepository>();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

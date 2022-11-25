@@ -74,7 +74,7 @@ namespace la_mia_pizzeria_static.Models.Repositories
         {
             return db.Ingredients.Where(i => i.Name == ingredient.Name).Count();
         }
-        public void Update(Pizza pizza, Pizza formData, List<int>? SelectedIngredients)
+        public void Update(Pizza pizza, Pizza formData, List<int>? SelectedIngredients, Category category)
         {
             pizza.Name = formData.Name;
             pizza.Description = formData.Description;

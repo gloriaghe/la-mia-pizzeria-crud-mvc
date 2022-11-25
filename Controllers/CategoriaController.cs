@@ -10,13 +10,14 @@ namespace la_mia_pizzeria_static.Controllers
 {
     public class CategoriaController : Controller
     {
-        PizzaDbContext db;
-        DbPizzeriaRepository pizzeria;
-
-        public CategoriaController() : base()
+        //PizzaDbContext db;
+        //DbPizzeriaRepository pizzeria;
+        IPizzeriaRepository pizzeria;
+        public CategoriaController(IPizzeriaRepository _pizzeria) : base()
         {
-            db = new PizzaDbContext();
-            pizzeria = new DbPizzeriaRepository();
+            //db = new PizzaDbContext();
+            //pizzeria = new DbPizzeriaRepository();
+            pizzeria = _pizzeria;
 
         }
 
@@ -70,8 +71,7 @@ namespace la_mia_pizzeria_static.Controllers
             {
                 return View(categoria);
             }
-
-            pizzeria.UpdateCat(categoria);
+            pizzeria.UpdateCat( categoria);
 
             return RedirectToAction("Index");
         }
