@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Microsoft.Extensions.Hosting;
+using Microsoft.SqlServer.Server;
 
 namespace la_mia_pizzeria_static.Models.Repositories
 {
@@ -8,6 +9,7 @@ namespace la_mia_pizzeria_static.Models.Repositories
         public static List<Pizza> Pizzas = new List<Pizza>();
         public static List<Category> Categories = new List<Category>();
         public static List<Ingredient> Ingredients = new List<Ingredient>();
+        private static int counter = 1;
 
 
         public List<Pizza> All()
@@ -19,19 +21,27 @@ namespace la_mia_pizzeria_static.Models.Repositories
         public void Create(Pizza pizza, List<int> selectedIngredients)
         {
             //simuliamo la primary key
-            pizza.Id = Pizzas.Count;
+            pizza.Id = counter;
+            counter++;
+
+            Category categoryChose = Categories.Where(c => c.Id == pizza.CategoryId).FirstOrDefault();
+            pizza.Category = categoryChose;
+            pizza.Ingredients = null;
+            List<Ingredient> ingredients = new List<Ingredient>();
 
             if (selectedIngredients != null)
             {
-
                 foreach (int ingID in selectedIngredients)
                 {
                     Ingredient ingredient = Ingredients.Where(i => i.Id == ingID).FirstOrDefault();
-                    pizza.Ingredients.Add(ingredient);
+
+                    ingredient.Pizzas.Add(pizza);
+
+                    ingredients.Add(ingredient);
                 }
             }
 
-
+            pizza.Ingredients = ingredients;
 
             Pizzas.Add(pizza);
         }
@@ -53,23 +63,40 @@ namespace la_mia_pizzeria_static.Models.Repositories
 
         public void Update(Pizza pizza, Pizza formData, List<int>? SelectedIngredients, Category category)
         {
-            pizza = formData;
-            pizza.Category = category;
+            //pizza = formData;
+            pizza.Name = formData.Name;
+            pizza.Description = formData.Description;
+            pizza.Price = formData.Price;
+            pizza.Image = formData.Image;
+            Category categoryChose = Categories.Where(c => c.Id == formData.CategoryId).FirstOrDefault();
+            pizza.Category = categoryChose;
+            pizza.CategoryId = formData.CategoryId;
+
 
             pizza.Ingredients = new List<Ingredient>();
 
 
             IngredientToPizza(pizza, SelectedIngredients);
-            //fine simulazione
         }
+
         private static void IngredientToPizza(Pizza pizza, List<int> selectedIngredient)
         {
-            pizza.Category = new Category() { Id = 1, Name = "Fake cateogry" };
 
-            foreach (int tagId in selectedIngredient)
+            List<Ingredient> ingredients = new List<Ingredient>();
+
+            if (selectedIngredient != null)
             {
-                pizza.Ingredients.Add(new Ingredient() { Id = tagId, Name = "Fake ingredient " + tagId });
+                foreach (int ingID in selectedIngredient)
+                {
+                    Ingredient ingredient = Ingredients.Where(i => i.Id == ingID).FirstOrDefault();
+
+                    ingredient.Pizzas.Add(pizza);
+
+                    ingredients.Add(ingredient);
+                }
             }
+
+            pizza.Ingredients = ingredients;
         }
 
         public List<Category> AllCat()
@@ -102,38 +129,60 @@ namespace la_mia_pizzeria_static.Models.Repositories
 
         public void CreateCat(Category category)
         {
+            category.Id = counter;
+            counter++;
+            category.Pizzas = new List<Pizza>();
             Categories.Add(category);
         }
 
         public void CreateIng(Ingredient ingredient)
         {
+            ingredient.Id = counter;
+            counter++;
+            ingredient.Pizzas = new List<Pizza>();
+
             Ingredients.Add(ingredient);
         }
 
         public int CountCat(Category category)
         {
-            return 0;
-;        }
+            Category categor = Categories.Where(c => c.Name == category.Name)
+                                //.Include("Pizzas")
+                                .FirstOrDefault();
+            if (categor != null)
+                return 1;
+            else
+                return 0;
+        }
 
         public int CountIng(Ingredient ingredient)
         {
-            return 0;
+            Ingredient ingrediente = Ingredients.Where(i => i.Name == ingredient.Name)
+                                            //.Include("Pizzas")
+                                            .FirstOrDefault();
+            if (ingrediente != null)
+                return 1;
+            else
+                return 0;
         }
 
         public void UpdateCat(Category category)
         {
-            //category = formdata;
+            Category cat = GetByIdCat(category.Id);
+            cat.Name = category.Name;
+            cat.Description = category.Description;
         }
 
+        public void UpdateIng(Ingredient ingredient)
+        {
+            Ingredient ing = GetByIdIng(ingredient.Id);
+            ing.Name = ingredient.Name;
+        }
         public void Deletecat(Category category)
         {
             Categories.Remove(category);
         }
 
-        public void UpdateIng(Ingredient ingredient)
-        {
-            throw new NotImplementedException();
-        }
 
         public void DeleteIng(Ingredient ingredient)
         {

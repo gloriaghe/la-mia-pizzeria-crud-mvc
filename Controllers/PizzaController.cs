@@ -67,31 +67,18 @@ namespace la_mia_pizzeria_static.Controllers
                 formData.Categories = pizzeria.AllCat(); ;
                 formData.Ingredients = new List<SelectListItem>();
 
-                List<Ingredient> tagList = pizzeria.AllIng();
+                List<Ingredient> ingredientList = pizzeria.AllIng();
 
-                foreach (Ingredient ing in tagList)
+                foreach (Ingredient ing in ingredientList)
                 {
                     formData.Ingredients.Add(new SelectListItem(ing.Name, ing.Id.ToString()));
                 }
 
                 return View(formData);
             }
+
             pizzeria.Create(formData.Pizza, formData.SelectedIngredients);
-            ////associazione dell'ingrediente selezionato dall'user al model
-            //formData.Pizza.Ingredients = new List<Ingredient>();
 
-            //if (formData.SelectedIngredients != null)
-            //{
-
-            //    foreach (int ingID in formData.SelectedIngredients)
-            //    {
-            //        Ingredient ingredient = db.Ingredients.Where(i => i.Id == ingID).FirstOrDefault();
-            //        formData.Pizza.Ingredients.Add(ingredient);
-            //    }
-            //}
-
-            //db.Pizzas.Add(formData.Pizza);
-            //db.SaveChanges();
 
             return RedirectToAction("Detail", new { id = formData.Pizza.Id });
         }
