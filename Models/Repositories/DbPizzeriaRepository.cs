@@ -66,11 +66,11 @@ namespace la_mia_pizzeria_static.Models.Repositories
             db.Ingredients.Add(ingredient);
             db.SaveChanges();
         }
-        public int CountCat(Category category)
+        public int GetByNameCategory(Category category)
         {
             return db.Categories.Where(c => c.Name == category.Name).Count();
         }
-        public int CountIng(Ingredient ingredient)
+        public int GetByNameIngredient(Ingredient ingredient)
         {
             return db.Ingredients.Where(i => i.Name == ingredient.Name).Count();
         }

@@ -144,10 +144,9 @@ namespace la_mia_pizzeria_static.Models.Repositories
             Ingredients.Add(ingredient);
         }
 
-        public int CountCat(Category category)
+        public int GetByNameCategory(Category category)
         {
             Category categor = Categories.Where(c => c.Name == category.Name)
-                                //.Include("Pizzas")
                                 .FirstOrDefault();
             if (categor != null)
                 return 1;
@@ -155,10 +154,9 @@ namespace la_mia_pizzeria_static.Models.Repositories
                 return 0;
         }
 
-        public int CountIng(Ingredient ingredient)
+        public int GetByNameIngredient(Ingredient ingredient)
         {
             Ingredient ingrediente = Ingredients.Where(i => i.Name == ingredient.Name)
-                                            //.Include("Pizzas")
                                             .FirstOrDefault();
             if (ingrediente != null)
                 return 1;

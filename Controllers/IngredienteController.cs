@@ -33,7 +33,7 @@ namespace la_mia_pizzeria_static.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Ingredient ingredient)
         {
-            if (pizzeria.CountIng(ingredient) > 0)
+            if (pizzeria.GetByNameIngredient(ingredient) > 0)
             {
                 return View("Errore", "L'ingrediente esiste già");
 

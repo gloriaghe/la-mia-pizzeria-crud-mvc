@@ -21,9 +21,9 @@
 
          void CreateIng(Ingredient ingredient);
         
-         int CountCat(Category category);
+         int GetByNameCategory(Category category);
         
-         int CountIng(Ingredient ingredient);
+         int GetByNameIngredient(Ingredient ingredient);
         
          void Update(Pizza pizza, Pizza formData, List<int>? SelectedIngredients, Category category);
        
